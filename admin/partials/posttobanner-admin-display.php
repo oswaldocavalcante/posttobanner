@@ -53,12 +53,14 @@ Your browser does not support the HTML canvas tag.</canvas>
 <p><button onClick="myCanvas()">Try it</button></p>
 
 <script>
-    var c = document.getElementById("myCanvas");
-    var ctx = c.getContext("2d");
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
     var img = new Image();
     var logo = new Image();
-    
-
+    var title = document.getElementById("my_title");
+    var category = '<?php echo $post_category[0]->name; ?>';
+    var referenceTitle = 'Leia o artigo em';
+    var reference = 'classebiblica.org/blog';
 
     function myCanvas() {
         ctx.drawImage(img,0,0);
@@ -66,21 +68,25 @@ Your browser does not support the HTML canvas tag.</canvas>
         ctx.fillRect(0, 0, 1000, 1000);
         ctx.drawImage(logo, 100, 100, 200, 73.48)
 
-        var title = document.getElementById("my_title");
-        var category = '<?php echo $post_category[0]->name; ?>';
-
+        //Write the Category
         ctx.fillStyle = "#fff";
-        ctx.font = "600 28px Montserrat";
+        ctx.font = "600 30px Montserrat";
         ctx.fillText(category.toUpperCase(), 100, 400);
         
+        //Write the Title
         ctx.font = "normal 60px Montserrat";
         var titleLines = fragmentText(title.innerHTML, 800);
-
-        let y = 530;
+        let y = 500;
         for (var i = 0; i < titleLines.length; i++) {            
             ctx.fillText(titleLines[i], 100, y);
             y = y+70;
         }
+
+        //Write the Reference
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        ctx.font = "normal 20px Montserrat";
+        ctx.fillText(referenceTitle.toUpperCase(), 500, 850);
     }
 
     img.src = '<?php echo $post_thumbnail_url; ?>';

@@ -102,7 +102,9 @@ class Posttobanner_Admin {
 	}
 
 	public function ptb_admin_menu() {
+
 		add_menu_page( 'Post to Banner Admin Page', 'Post to Banner', 'manage_options', 'posttobanner', array( $this, 'ptb_admin_page'), 'dashicons-book-alt', 250 );
+	
 	}
 
 	public function ptb_admin_page() {
@@ -111,6 +113,11 @@ class Posttobanner_Admin {
 
 	}
 
+	public function ptb_meta_box() {
+		
+		require_once 'class-posttobanner-metabox.php';
+		new ptbMetaBox();
 
+	}
 
 }
