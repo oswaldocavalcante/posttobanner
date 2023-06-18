@@ -52,6 +52,7 @@ class Posttobanner_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
+
 	}
 
 	/**
@@ -99,5 +100,17 @@ class Posttobanner_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/posttobanner-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
+
+	public function ptb_admin_menu() {
+		add_menu_page( 'Post to Banner Admin Page', 'Post to Banner', 'manage_options', 'posttobanner', array( $this, 'ptb_admin_page'), 'dashicons-book-alt', 250 );
+	}
+
+	public function ptb_admin_page() {
+
+		require_once 'partials/posttobanner-admin-display.php';
+
+	}
+
+
 
 }
