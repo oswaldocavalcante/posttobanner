@@ -38,7 +38,7 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'POSTTOBANNER_VERSION', '1.0.0' );
 
 // Include Updater file
-if( ! class_exists( 'Classebiblica_Updater' ) ){
+if( ! class_exists( 'Posttobanner_Updater' ) ){
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-posttobanner-updater.php';
 }
 
