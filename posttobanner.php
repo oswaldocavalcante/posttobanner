@@ -37,6 +37,16 @@ if ( ! defined( 'WPINC' ) ) {
  */
 define( 'POSTTOBANNER_VERSION', '1.0.0' );
 
+// Include Updater file
+if( ! class_exists( 'Classebiblica_Updater' ) ){
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-posttobanner-updater.php';
+}
+
+$updater = new Posttobanner_Updater( __FILE__ ); // instantiate our class
+$updater->set_username( 'oswaldocavalcante' ); // set username
+$updater->set_repository( 'posttobanner' ); // set repository
+$updater->initialize(); // initialize the updater
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-posttobanner-activator.php

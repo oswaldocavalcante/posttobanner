@@ -114,22 +114,23 @@ class ptbMetaBox {
             var canvas = document.getElementById("ptb-canvas");
             var ctx = canvas.getContext("2d");
 
-            //Getting the logo
+            //Setting the logo
             var img = new Image();
             img.crossOrigin = "anonymous";
             img.src = '<?php echo $post_thumbnail_url; ?>';
             
-            //Getting the background image;
+            //Setting the background image;
             var logo = new Image();
             logo.crossOrigin = "anonymous";
             logo.src = 'https://classebiblica.org/wp-content/uploads/2023/06/classebiblica_logotipo_horizontal_branco.png';
             
-            //Getting post data
+            //Setting post data
             var category = '<?php echo $post_category[0]->name; ?>';
             var title = '<?php echo $post_title; ?>';
             var referenceTitle = 'já disponível em';
             var reference = 'classebiblica.org/blog';
 
+            //Drawing the canva
             function myCanvas() {
                 //Background
                 drawImageScaled(img, ctx);
@@ -214,7 +215,7 @@ class ptbMetaBox {
                 var ptbCanvas = document.getElementById("ptb-canvas");
                 var banner = ptbCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
                 var link = document.createElement('a');
-                link.download = "my-image.png";
+                link.download = "banner.png";
                 link.href = banner;
                 link.click();
             }
