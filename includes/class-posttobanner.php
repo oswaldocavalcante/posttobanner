@@ -158,6 +158,7 @@ class Posttobanner {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		$this->loader->add_action( 'admin_menu', 			$plugin_admin, 'ptb_admin_menu' );
+		$this->loader->add_action( 'admin_init', 			$plugin_admin, 'ptb_admin_register_settings' );
 
 		$this->loader->add_action( 'load-post.php', 		$plugin_admin, 'ptb_meta_box' );
 		$this->loader->add_action( 'load-post-new.php', 	$plugin_admin, 'ptb-meta_box' );

@@ -114,6 +114,15 @@ class Posttobanner_Admin {
 	
 	}
 
+	public function ptb_admin_register_settings() {
+		
+		register_setting( 'ptb_settings', 'ptb_blog_url' );
+		register_setting( 'ptb_settings', 'ptb_image_id' );
+		register_setting( 'ptb_settings', 'ptb_category' );
+		register_setting( 'ptb_settings', 'ptb_footer_title' );
+
+	}
+
 	public function ptb_admin_page() {
 
 		require_once 'partials/posttobanner-admin-display.php';

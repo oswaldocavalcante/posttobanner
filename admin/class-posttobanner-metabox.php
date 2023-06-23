@@ -122,13 +122,19 @@ class ptbMetaBox {
             //Setting the background image;
             var logo = new Image();
             logo.crossOrigin = "anonymous";
-            logo.src = 'https://classebiblica.org/wp-content/uploads/2023/06/classebiblica_logotipo_horizontal_branco.png';
+            logo.src = '<?php echo wp_get_attachment_image_url(get_option( 'ptb_image_id' ), 'full'); ?>';
             
             //Setting post data
-            var category = '<?php echo $post_category[0]->name; ?>';
-            var title = '<?php echo $post_title; ?>';
-            var referenceTitle = 'já disponível em';
-            var reference = 'classebiblica.org/blog';
+            var title = '<?php echo html_entity_decode( $post_title ); ?>';
+
+            var category = '<?php echo get_option( 'ptb_category' ); ?>';
+            if (category == '') category = '<?php echo $post_category[0]->name; ?>';
+
+            var referenceTitle = '<?php echo get_option( 'ptb_footer_title' ); ?>';
+            if ( referenceTitle == '' ) referenceTitle = 'Read now';
+
+            var reference = '<?php echo get_option( 'ptb_blog_url' ); ?>';
+            if ( reference == '' ) reference = '<?php echo get_permalink( get_option( 'page_for_posts' ) ); ?>';
 
             //Drawing the canva
             function myCanvas() {
