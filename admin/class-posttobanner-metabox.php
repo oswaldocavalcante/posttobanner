@@ -89,43 +89,90 @@ class ptbMetaBox {
 	 */
 	public function render_meta_box_content( $post ) {
 
-		// Add an nonce field so we can check for it later.
-		wp_nonce_field( 'myplugin_inner_custom_box', 'myplugin_inner_custom_box_nonce' );
-
-		// Use get_post_meta to retrieve an existing value from the database.
-		$value = get_post_meta( $post->ID, '_my_meta_value_key', true );
-
         if (has_post_thumbnail( $post->ID ) ) {
+
             $post_thumbnail_url = get_the_post_thumbnail_url( $post , 'full' );
             $post_category = get_the_category( $post->ID );
-            $post_title = get_the_title( );
+            $post_title = get_the_title( $post );
+            $post_excerpt = get_the_excerpt( $post );
+
+        } else {
+
+            echo esc_html( "<p>The post hasn't a thumbnail image</p>" );
+            return false;
+
         }
 
         ?>
 
         <div id="ptb-canvas-container">
-            <canvas id="ptb-canvas" width="1000px" height="1000px">
+            <canvas id="ptb-canvas-feed" width="1200px" height="1200px">
                 Your browser does not support the HTML canvas tag.
             </canvas>
+            <p><button onClick="ptbDownload('ptb-canvas-feed', 'feed')" class="button">Download</button></p>
+        </div>
+
+        <div id="ptb-canvas-container">
+            <canvas id="ptb-canvas-story" width="1080px" height="1920px">
+                Your browser does not support the HTML canvas tag.
+            </canvas>
+            <p><button onClick="ptbDownload('ptb-canvas-story', 'story')" class="button">Download</button></p>
         </div>
 
         <script>
-            //Creating the Canva
-            var canvas = document.getElementById("ptb-canvas");
-            var ctx = canvas.getContext("2d");
+            //Creating canvas for Feed
+            var canvasFeed = document.getElementById("ptb-canvas-feed");
+            var contextFeed = canvasFeed.getContext("2d");
+            canvasFeed.style.maxWidth = '100%';
+            canvasFeed.style.maxHeight = '100%';
 
-            //Setting the logo
-            var img = new Image();
-            img.crossOrigin = "anonymous";
-            img.src = '<?php echo $post_thumbnail_url; ?>';
+            // Creating canvas for Story
+            var canvasStory = document.getElementById("ptb-canvas-story");
+            var contextStory = canvasStory.getContext("2d");
+            canvasStory.style.maxWidth = '100%';
+            canvasStory.style.maxHeight = '100%';
+
+            //Setting the background image
+            var background = new Image();
+            background.crossOrigin = "anonymous";
+            background.src = '<?php echo $post_thumbnail_url; ?>';
             
-            //Setting the background image;
+            //Setting the logo
             var logo = new Image();
             logo.crossOrigin = "anonymous";
-            logo.src = '<?php echo wp_get_attachment_image_url(get_option( 'ptb_image_id' ), 'full'); ?>';
+            logo.src = '<?php echo wp_get_attachment_image_url( get_option( 'ptb_image_id' ), 'full' ); ?>';
+            logo = scaleLogo(logo, 300);
+
+            function scaleLogo(img, maxSize) {
+                let maxWidth = maxSize;
+                let maxHeight = maxSize;
+
+                let logoWidth = logo.width;
+                let logoHeight = logo.height;
+
+                // Change the resizing logic
+                if (logoWidth > logoHeight) {
+                    if (logoWidth > maxWidth) {
+                        logoHeight = logoHeight * (maxWidth / logoWidth);
+                        logoWidth = maxWidth;
+                    }
+                } else {
+                    if (logoHeight > maxHeight) {
+                        logoWidth = logoWidth * (maxHeight / logoHeight);
+                        logoHeight = maxHeight;
+                    }
+                }
+
+                img.width = logoWidth;
+                img.height = logoHeight;
+
+                return img;
+            }
             
             //Setting post data
             var title = '<?php echo html_entity_decode( $post_title ); ?>';
+
+            var excerpt = '<?php echo html_entity_decode( $post_excerpt ); ?>';
 
             var category = '<?php echo get_option( 'ptb_category' ); ?>';
             if (category == '') category = '<?php echo $post_category[0]->name; ?>';
@@ -137,49 +184,102 @@ class ptbMetaBox {
             if ( reference == '' ) reference = '<?php echo get_permalink( get_option( 'page_for_posts' ) ); ?>';
 
             //Drawing the canva
-            function myCanvas() {
+            function renderImageFeed(canvas, ctx, margin) {
                 //Background
-                drawImageScaled(img, ctx);
+                setBackground(background, ctx);
+                let width = canvas.width;
+                let height = canvas.height;
 
                 //Darkening Background
-                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-                ctx.fillRect(0, 0, 1000, 1000);
+                ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+                ctx.fillRect(0, 0, width, height);
 
                 //Adding the Logo
-                ctx.drawImage(logo, 100, 100, 200, 73.48)
+                ctx.drawImage(logo, margin, margin, logo.width, logo.height)
 
                 //Write the Category
                 ctx.fillStyle = "#fff";
                 ctx.font = "600 28px Montserrat";
-                ctx.fillText(category.toUpperCase(), 100, 400);
+                ctx.letterSpacing = '10px';
+                ctx.fillText(category.toUpperCase(), margin, 450);
                 
                 //Write the Title
                 ctx.font = "normal 60px Montserrat";
-                let titleLines = fragmentText(title, 800);
-                let y = 500;
-                for (let i = 0; i < titleLines.length; i++) {            
-                    ctx.fillText(titleLines[i], 100, y);
-                    y = y+70;
-                }
+                ctx.letterSpacing = '0px';
+                fillTextLines(ctx, title, 70, 800, margin, 600);
 
-                //Write the Reference Title
+                //Write the URL Title
                 ctx.textAlign = "center";
                 ctx.textBaseline = "bottom";
-                ctx.font = "normal 15px Montserrat";
-                ctx.fillText(referenceTitle.toUpperCase(), 500, 800);
-                ctx.font = "normal 25px Montserrat";
-                ctx.fillText(reference, 500, 850);
+                ctx.font = "normal 20px Montserrat";
+                ctx.fillText(referenceTitle.toUpperCase(), width/2, 990);
+
+                //Write the URL
+                ctx.font = "normal 35px Montserrat";
+                ctx.fillText(reference, width/2, 1050);
             }
 
-            canvas.style.maxWidth = '100%';
-            canvas.style.maxHeight = '100%';
+            function renderImageStory(canvas, ctx, margin) {
+                // Setting Background
+                setBackground(background, ctx);
 
-            function fragmentText(text, maxWidth) {
+                // Setting properties
+                let width = canvas.width;
+                let height = canvas.height;
+                ctx.textAlign = "center";
+
+                //Darkening Background
+                ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+                ctx.fillRect(0, 0, width, height);
+
+                //Adding the Logo
+                let imageCenter = (width/2) - (logo.width/2);
+                ctx.drawImage(logo, imageCenter, 220, logo.width, logo.height)
+
+                //Write the Post Category
+                ctx.fillStyle = "#fff";
+                ctx.font = "600 32px Montserrat";
+                ctx.letterSpacing = '10px';
+                ctx.fillText(category.toUpperCase(), width/2, 720);
+                
+                //Write the Post Title
+                ctx.font = "normal 60px Montserrat";
+                ctx.letterSpacing = '0px';
+                var lastY = fillTextLines(ctx, title, 90, 800, width/2, 860);
+
+                // Write the Excerpt
+                // ctx.font = "normal 36px Montserrat";
+                // fillTextLines(ctx, excerpt, 60, 800, width/2, lastY + 150);
+
+                //Write the URL Title
+                ctx.textBaseline = "bottom";
+                ctx.font = "normal 24px Montserrat";
+                ctx.fillText(referenceTitle.toUpperCase(), width/2, height - 380);
+
+                //Write the URL
+                ctx.font = "normal 40px Montserrat";
+                ctx.fillText(reference, width/2, height - 300);
+            }
+
+            function setBackground(img, ctx) {
+                let canvas = ctx.canvas ;
+                let hRatio = canvas.width  / img.width    ;
+                let vRatio =  canvas.height / img.height  ;
+                let ratio  = Math.max ( hRatio, vRatio );
+                let centerShift_x = ( canvas.width - img.width*ratio ) / 2;
+                var centerShift_y = ( canvas.height - img.height*ratio ) / 2;  
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                ctx.drawImage(img, 0,0, img.width, img.height, centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);  
+            }
+
+            function fillTextLines(ctx, text, lineHeight, maxWidth, x, y) {
+                
                 var words = text.split(' '),
                     lines = [],
                     line = "";
                 if (ctx.measureText(text).width < maxWidth) {
-                    return [text];
+                    ctx.fillText(text, x, y);
+                    return;
                 }
                 while (words.length > 0) {
                     var split = false;
@@ -203,34 +303,35 @@ class ptbMetaBox {
                         lines.push(line);
                     }
                 }
-                return lines;
+
+                let shiftY = y;
+                for (let i = 0; i < lines.length; i++) {            
+                    ctx.fillText(lines[i], x, shiftY);
+                    shiftY = shiftY + lineHeight;
+                }
+
+                return shiftY;
             }
 
-            function drawImageScaled(img, ctx) {
-                let canvas = ctx.canvas ;
-                let hRatio = canvas.width  / img.width    ;
-                let vRatio =  canvas.height / img.height  ;
-                let ratio  = Math.max ( hRatio, vRatio );
-                let centerShift_x = ( canvas.width - img.width*ratio ) / 2;
-                var centerShift_y = ( canvas.height - img.height*ratio ) / 2;  
-                ctx.clearRect(0,0,canvas.width, canvas.height);
-                ctx.drawImage(img, 0,0, img.width, img.height, centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);  
-            }
-
-            function ptbDownload(){
-                var ptbCanvas = document.getElementById("ptb-canvas");
-                var banner = ptbCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-                var link = document.createElement('a');
-                link.download = "banner.png";
-                link.href = banner;
+            function ptbDownload(canvas, type){
+                let ptbCanvas = document.getElementById(canvas);
+                let renderedImage = ptbCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                let link = document.createElement('a');
+                link.download = "<?php echo ( 'post-' . $post->ID ); ?>" + "-" + type + ".png";
+                link.href = renderedImage;
                 link.click();
             }
 
-            window.addEventListener('load', myCanvas);
+            function renderImages(){
+                renderImageFeed(canvasFeed, contextFeed, 150);
+                renderImageStory(canvasStory, contextStory, 150);
+            }
+
+            window.addEventListener('load', renderImages);
 
         </script>
 
-        <p><button onClick="ptbDownload()">Download</button></p>
+        
 
         <?php
 	}
