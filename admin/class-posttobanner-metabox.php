@@ -6,8 +6,9 @@ class ptbMetaBox {
 	 * Hook into the appropriate actions when the class is constructed.
 	 */
 	public function __construct() {
-		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
-		add_action( 'save_post',      array( $this, 'save'         ) );
+		add_action( 'add_meta_boxes',       array( $this, 'add_meta_box' ) );
+		add_action( 'save_post',            array( $this, 'save'         ) );
+        add_action( 'wp_enqueue_scripts',   'google_fonts' );
 	}
 
 	/**
@@ -81,6 +82,11 @@ class ptbMetaBox {
 		update_post_meta( $post_id, '_my_meta_value_key', $mydata );
 	}
 
+    function google_fonts() {
+
+        wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Montserrat&display=swap', false );
+    }
+
 
 	/**
 	 * Render Meta Box content.
@@ -89,7 +95,7 @@ class ptbMetaBox {
 	 */
 	public function render_meta_box_content( $post ) {
 
-        if (has_post_thumbnail( $post->ID ) ) {
+        if ( has_post_thumbnail( $post->ID ) ) {
 
             $post_thumbnail_url = get_the_post_thumbnail_url( $post , 'full' );
             $post_category = get_the_category( $post->ID );
@@ -110,7 +116,7 @@ class ptbMetaBox {
             <canvas id="ptb-canvas-feed" width="1200px" height="1200px">
                 Your browser does not support the HTML canvas tag.
             </canvas>
-            <button onClick="ptbDownload('ptb-canvas-feed', 'feed')" class="button">Download</button>
+            <button onClick="download('ptb-canvas-feed', 'feed')" class="button">Download</button>
         </div>
 
         <div id="ptb-container-story" class="ptb-metabox-container">
@@ -118,7 +124,7 @@ class ptbMetaBox {
             <canvas id="ptb-canvas-story" width="1080px" height="1920px">
                 Your browser does not support the HTML canvas tag.
             </canvas>
-            <button onClick="ptbDownload('ptb-canvas-story', 'story')" class="button">Download</button>
+            <button onClick="download('ptb-canvas-story', 'story')" class="button">Download</button>
         </div>
 
         <script>
@@ -144,34 +150,6 @@ class ptbMetaBox {
             var logo = new Image();
             logo.crossOrigin = "anonymous";
             logo.src = '<?php echo wp_get_original_image_url( get_option( 'ptb_image_id' ) ); ?>';
-            logo = scaleLogo( logo, 270 );
-
-            function scaleLogo( img, maxSize ) {
-
-                let maxWidth = maxSize;
-                let maxHeight = maxSize;
-
-                let logoWidth = logo.width;
-                let logoHeight = logo.height;
-
-                // Change the resizing logic
-                if (logoWidth > logoHeight) {
-                    if (logoWidth > maxWidth) {
-                        logoHeight = logoHeight * (maxWidth / logoWidth);
-                        logoWidth = maxWidth;
-                    }
-                } else {
-                    if (logoHeight > maxHeight) {
-                        logoWidth = logoWidth * (maxHeight / logoHeight);
-                        logoHeight = maxHeight;
-                    }
-                }
-
-                img.width = logoWidth;
-                img.height = logoHeight;
-
-                return img;
-            }
             
             // Setting post data
             var title = '<?php echo html_entity_decode( $post_title ); ?>';
@@ -187,29 +165,33 @@ class ptbMetaBox {
             if ( reference == '' ) reference = '<?php echo get_permalink( get_option( 'page_for_posts' ) ); ?>';
 
             // Drawing the canva
-            function renderImageFeed(canvas, ctx, margin) {
+            function renderImageFeed( canvas, ctx ) {
+
                 //Background
                 setBackground(background, ctx);
                 let width = canvas.width;
                 let height = canvas.height;
+                let leftMargin = width * 0.125;
+                let topMargin = height * 0.125;
 
                 //Darkening Background
                 ctx.fillStyle = "rgba(0, 0, 0, 0.80)";
                 ctx.fillRect(0, 0, width, height);
 
                 //Adding the Logo
-                ctx.drawImage(logo, margin, margin, logo.width, logo.height);
+                logo = scaleLogo( logo, 270 );
+                ctx.drawImage(logo, leftMargin, topMargin, logo.width, logo.height);
 
                 //Write the Category
                 ctx.fillStyle = "#fff";
                 ctx.font = "600 28px Montserrat";
                 ctx.letterSpacing = '10px';
-                ctx.fillText(category.toUpperCase(), margin, 450);
+                ctx.fillText(category.toUpperCase(), leftMargin, 450);
                 
                 //Write the Title
                 ctx.font = "normal 60px Montserrat";
                 ctx.letterSpacing = '0px';
-                fillTextLines(ctx, title, 90, 800, margin, 600);
+                fillTextLines(ctx, title, 90, 800, leftMargin, 600);
 
                 //Write the URL Title
                 ctx.textAlign = "center";
@@ -222,7 +204,8 @@ class ptbMetaBox {
                 ctx.fillText(reference, width/2, 1050);
             }
 
-            function renderImageStory(canvas, ctx, margin) {
+            function renderImageStory( canvas, ctx ) {
+
                 // Setting Background
                 setBackground(background, ctx);
 
@@ -236,6 +219,7 @@ class ptbMetaBox {
                 ctx.fillRect(0, 0, width, height);
 
                 //Adding the Logo
+                logo = scaleLogo( logo, 270 );
                 let imageCenter = (width/2) - (logo.width/2);
                 ctx.drawImage(logo, imageCenter, 220, logo.width, logo.height);
 
@@ -264,7 +248,34 @@ class ptbMetaBox {
                 ctx.fillText(reference, width/2, height - 300);
             }
 
-            function setBackground(img, ctx) {
+            function scaleLogo( img, maxSize ) {
+
+                let maxWidth = maxSize;
+                let maxHeight = maxSize;
+
+                let logoWidth = logo.width;
+                let logoHeight = logo.height;
+
+                // Change the resizing logic
+                if (logoWidth > logoHeight) {
+                    if (logoWidth > maxWidth) {
+                        logoHeight = logoHeight * (maxWidth / logoWidth);
+                        logoWidth = maxWidth;
+                    }
+                } else {
+                    if (logoHeight > maxHeight) {
+                        logoWidth = logoWidth * (maxHeight / logoHeight);
+                        logoHeight = maxHeight;
+                    }
+                }
+
+                img.width = logoWidth;
+                img.height = logoHeight;
+
+                return img;
+            }
+
+            function setBackground( img, ctx ) {
                 let canvas = ctx.canvas ;
                 let hRatio = canvas.width  / img.width    ;
                 let vRatio =  canvas.height / img.height  ;
@@ -275,15 +286,17 @@ class ptbMetaBox {
                 ctx.drawImage(img, 0,0, img.width, img.height, centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);  
             }
 
-            function fillTextLines(ctx, text, lineHeight, maxWidth, x, y) {
+            function fillTextLines( ctx, text, lineHeight, maxWidth, x, y ) {
                 
                 var words = text.split(' '),
                     lines = [],
                     line = "";
+
                 if (ctx.measureText(text).width < maxWidth) {
                     ctx.fillText(text, x, y);
                     return;
                 }
+
                 while (words.length > 0) {
                     var split = false;
                     while (ctx.measureText(words[0]).width >= maxWidth) {
@@ -316,7 +329,7 @@ class ptbMetaBox {
                 return shiftY;
             }
 
-            function ptbDownload(canvas, type){
+            function download(canvas, type){
                 let ptbCanvas = document.getElementById(canvas);
                 let renderedImage = ptbCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
                 let link = document.createElement('a');
@@ -326,8 +339,8 @@ class ptbMetaBox {
             }
 
             function renderImages(){
-                renderImageFeed(canvasFeed, contextFeed, 150);
-                renderImageStory(canvasStory, contextStory, 150);
+                renderImageFeed( canvasFeed, contextFeed );
+                renderImageStory( canvasStory, contextStory );
             }
 
             window.addEventListener('load', renderImages);
