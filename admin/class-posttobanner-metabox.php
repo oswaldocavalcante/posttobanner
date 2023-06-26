@@ -179,7 +179,7 @@ class ptbMetaBox {
                 ctx.fillRect(0, 0, width, height);
 
                 //Adding the Logo
-                logo = scaleLogo( logo, 270 );
+                logo = scaleLogo(logo, 270);
                 ctx.drawImage(logo, leftMargin, topMargin, logo.width, logo.height);
 
                 //Write the Category
@@ -219,7 +219,7 @@ class ptbMetaBox {
                 ctx.fillRect(0, 0, width, height);
 
                 //Adding the Logo
-                logo = scaleLogo( logo, 270 );
+                logo = scaleLogo(logo, 270);
                 let imageCenter = (width/2) - (logo.width/2);
                 ctx.drawImage(logo, imageCenter, 220, logo.width, logo.height);
 
