@@ -98,29 +98,32 @@ class ptbMetaBox {
 
         } else {
 
-            echo esc_html( "<p>The post hasn't a thumbnail image</p>" );
+            echo esc_html( "The post hasn't a thumbnail image." );
             return false;
 
         }
 
         ?>
 
-        <div id="ptb-canvas-container">
+        <div id="ptb-container-feed" class="ptb-metabox-container">
+            <span class="ptb-metabox-title">Feed</span>
             <canvas id="ptb-canvas-feed" width="1200px" height="1200px">
                 Your browser does not support the HTML canvas tag.
             </canvas>
-            <p><button onClick="ptbDownload('ptb-canvas-feed', 'feed')" class="button">Download</button></p>
+            <button onClick="ptbDownload('ptb-canvas-feed', 'feed')" class="button">Download</button>
         </div>
 
-        <div id="ptb-canvas-container">
+        <div id="ptb-container-story" class="ptb-metabox-container">
+            <span class="ptb-metabox-title">Story</span>
             <canvas id="ptb-canvas-story" width="1080px" height="1920px">
                 Your browser does not support the HTML canvas tag.
             </canvas>
-            <p><button onClick="ptbDownload('ptb-canvas-story', 'story')" class="button">Download</button></p>
+            <button onClick="ptbDownload('ptb-canvas-story', 'story')" class="button">Download</button>
         </div>
 
         <script>
-            //Creating canvas for Feed
+
+            // Creating canvas for Feed
             var canvasFeed = document.getElementById("ptb-canvas-feed");
             var contextFeed = canvasFeed.getContext("2d");
             canvasFeed.style.maxWidth = '100%';
@@ -132,18 +135,19 @@ class ptbMetaBox {
             canvasStory.style.maxWidth = '100%';
             canvasStory.style.maxHeight = '100%';
 
-            //Setting the background image
+            // Setting the background image
             var background = new Image();
             background.crossOrigin = "anonymous";
             background.src = '<?php echo $post_thumbnail_url; ?>';
             
-            //Setting the logo
+            // Setting the logo
             var logo = new Image();
             logo.crossOrigin = "anonymous";
-            logo.src = '<?php echo wp_get_attachment_image_url( get_option( 'ptb_image_id' ), 'full' ); ?>';
-            logo = scaleLogo(logo, 300);
+            logo.src = '<?php echo wp_get_original_image_url( get_option( 'ptb_image_id' ) ); ?>';
+            logo = scaleLogo( logo, 270 );
 
-            function scaleLogo(img, maxSize) {
+            function scaleLogo( img, maxSize ) {
+
                 let maxWidth = maxSize;
                 let maxHeight = maxSize;
 
@@ -169,7 +173,7 @@ class ptbMetaBox {
                 return img;
             }
             
-            //Setting post data
+            // Setting post data
             var title = '<?php echo html_entity_decode( $post_title ); ?>';
             var excerpt = '<?php echo html_entity_decode( $post_excerpt ); ?>';
 
@@ -182,7 +186,7 @@ class ptbMetaBox {
             var reference = '<?php echo get_option( 'ptb_blog_url' ); ?>';
             if ( reference == '' ) reference = '<?php echo get_permalink( get_option( 'page_for_posts' ) ); ?>';
 
-            //Drawing the canva
+            // Drawing the canva
             function renderImageFeed(canvas, ctx, margin) {
                 //Background
                 setBackground(background, ctx);
@@ -190,7 +194,7 @@ class ptbMetaBox {
                 let height = canvas.height;
 
                 //Darkening Background
-                ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+                ctx.fillStyle = "rgba(0, 0, 0, 0.80)";
                 ctx.fillRect(0, 0, width, height);
 
                 //Adding the Logo
@@ -228,7 +232,7 @@ class ptbMetaBox {
                 ctx.textAlign = "center";
 
                 //Darkening Background
-                ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+                ctx.fillStyle = "rgba(0, 0, 0, 0.80)";
                 ctx.fillRect(0, 0, width, height);
 
                 //Adding the Logo
@@ -329,8 +333,6 @@ class ptbMetaBox {
             window.addEventListener('load', renderImages);
 
         </script>
-
-        
 
         <?php
 	}

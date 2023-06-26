@@ -3,3 +3,11 @@
  * included in this file.
  */
 
+#ptb-container-feed {
+    margin-bottom: 30px;
+}
+
+.ptb-metabox-container canvas {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
