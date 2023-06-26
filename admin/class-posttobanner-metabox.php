@@ -171,7 +171,6 @@ class ptbMetaBox {
             
             //Setting post data
             var title = '<?php echo html_entity_decode( $post_title ); ?>';
-
             var excerpt = '<?php echo html_entity_decode( $post_excerpt ); ?>';
 
             var category = '<?php echo get_option( 'ptb_category' ); ?>';
@@ -195,7 +194,7 @@ class ptbMetaBox {
                 ctx.fillRect(0, 0, width, height);
 
                 //Adding the Logo
-                ctx.drawImage(logo, margin, margin, logo.width, logo.height)
+                ctx.drawImage(logo, margin, margin, logo.width, logo.height);
 
                 //Write the Category
                 ctx.fillStyle = "#fff";
@@ -206,7 +205,7 @@ class ptbMetaBox {
                 //Write the Title
                 ctx.font = "normal 60px Montserrat";
                 ctx.letterSpacing = '0px';
-                fillTextLines(ctx, title, 70, 800, margin, 600);
+                fillTextLines(ctx, title, 90, 800, margin, 600);
 
                 //Write the URL Title
                 ctx.textAlign = "center";
@@ -234,7 +233,7 @@ class ptbMetaBox {
 
                 //Adding the Logo
                 let imageCenter = (width/2) - (logo.width/2);
-                ctx.drawImage(logo, imageCenter, 220, logo.width, logo.height)
+                ctx.drawImage(logo, imageCenter, 220, logo.width, logo.height);
 
                 //Write the Post Category
                 ctx.fillStyle = "#fff";
