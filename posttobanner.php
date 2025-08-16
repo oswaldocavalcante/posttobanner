@@ -16,7 +16,7 @@
  * Plugin Name:       Post to Banner
  * Plugin URI:        https://github.com/oswaldocavalcante/posttobanner
  * Description:       Create a image banners from WordPress posts to share on social media.
- * Version:           3.1.2
+ * Version:           3.2.0
  * Author:            Oswaldo Cavalcante
  * Author URI:        https://oswaldocavalcante.com
  * License:           GPL-2.0+
