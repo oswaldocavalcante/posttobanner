@@ -3,16 +3,6 @@
 /**
  * The admin-specific functionality of the plugin.
  *
- * @link       https://oswaldocavalcante.com
- * @since      1.0.0
- *
- * @package    Posttobanner
- * @subpackage Posttobanner/admin
- */
-
-/**
- * The admin-specific functionality of the plugin.
- *
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
@@ -51,8 +41,6 @@ class Posttobanner_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
-
 	}
 
 	/**
@@ -60,22 +48,10 @@ class Posttobanner_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Posttobanner_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Posttobanner_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
+	public function enqueue_styles() 
+	{
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/posttobanner-admin.css', array(), $this->version, 'all' );
-
+		wp_enqueue_style('ptb-google-fonts', 'https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 	}
 
 	/**
@@ -83,26 +59,13 @@ class Posttobanner_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_scripts() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Posttobanner_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Posttobanner_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
+	public function enqueue_scripts() 
+	{
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/posttobanner-admin.js', array( 'jquery' ), $this->version, false );
-
 	}
 
-	public function ptb_admin_menu() {
-
+	public function ptb_admin_menu() 
+	{
 		add_submenu_page(
 			'options-general.php',
 			'Post to Banner Settings',
@@ -111,29 +74,25 @@ class Posttobanner_Admin {
 			'posttobanner',
 			array( $this, 'ptb_admin_page'),
 		);
-	
 	}
 
-	public function ptb_admin_register_settings() {
-		
+	public function ptb_admin_register_settings()
+	{
 		register_setting( 'ptb_settings', 'ptb_blog_url' );
 		register_setting( 'ptb_settings', 'ptb_image_id' );
 		register_setting( 'ptb_settings', 'ptb_category' );
 		register_setting( 'ptb_settings', 'ptb_footer_title' );
-
 	}
 
-	public function ptb_admin_page() {
-
+	public function ptb_admin_page() 
+	{
 		require_once 'partials/posttobanner-admin-display.php';
-
 	}
 
-	public function ptb_meta_box() {
-		
+	public function ptb_meta_box() 
+	{
 		require_once 'class-posttobanner-metabox.php';
 		new ptbMetaBox();
-
 	}
 
 }
