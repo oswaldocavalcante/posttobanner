@@ -35,17 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'POSTTOBANNER_VERSION', '3.1.2' );
-
-// Include Updater file
-if( ! class_exists( 'Posttobanner_Updater' ) ){
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-posttobanner-updater.php';
-}
-
-$updater = new Posttobanner_Updater( __FILE__ ); // instantiate our class
-$updater->set_username( 'oswaldocavalcante' ); // set username
-$updater->set_repository( 'posttobanner' ); // set repository
-$updater->initialize(); // initialize the updater
+define( 'POSTTOBANNER_VERSION', '3.2.0' );
 
 /**
  * The code that runs during plugin activation.

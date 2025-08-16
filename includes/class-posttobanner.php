@@ -135,12 +135,10 @@ class Posttobanner {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function set_locale() {
-
+	private function set_locale()
+	{
 		$plugin_i18n = new Posttobanner_i18n();
-
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
 	}
 
 	/**
@@ -150,8 +148,8 @@ class Posttobanner {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_admin_hooks() {
-
+	private function define_admin_hooks()
+	{
 		$plugin_admin = new Posttobanner_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
@@ -162,7 +160,6 @@ class Posttobanner {
 
 		$this->loader->add_action( 'load-post.php', 		$plugin_admin, 'ptb_meta_box' );
 		$this->loader->add_action( 'load-post-new.php', 	$plugin_admin, 'ptb_meta_box' );
-
 	}
 
 	/**
